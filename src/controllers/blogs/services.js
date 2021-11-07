@@ -3,7 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const getBlogs = async () => {
   await delay(1000)
-  return global.blogs || []
+  return global.blogs.map(i => ({
+    id: i?.id,
+    createdAt: i?.createdAt,
+    title: i?.title,
+  })) || []
 }
 
 export const getBlogById = async (id) => {
