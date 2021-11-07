@@ -4,11 +4,11 @@
 
 |                |Value                          |
 |----------------|-------------------------------|
-|GET `/blogs`|Get blogs|
-|GET `/blogs/:id`|Get blog by id|
-|POST `/blogs`|Create a new blog|
-|PUT `/blogs/:id`|Edit blog by id|
-|DELETE `/blogs:/:id`|Delete blog by id|
+|GET `/api/blogs`|Get blogs|
+|GET `/api/blogs/:id`|Get blog by id|
+|POST `/api/blogs`|Create a new blog|
+|PUT `/api/blogs/:id`|Edit blog by id|
+|DELETE `/api/blogs:/:id`|Delete blog by id|
 
 ## Postman
 
