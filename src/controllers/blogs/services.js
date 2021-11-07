@@ -45,6 +45,6 @@ export const deleteBlogById = async (id) => {
   if (blogIndex === -1) {
     return null
   }
-  global.blogs?.filter(i => i.id !== id)
+  global.blogs = global.blogs?.filter(i => i.id !== id)
   return true
 }
