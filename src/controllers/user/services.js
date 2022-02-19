@@ -1,42 +1,38 @@
 import { hashPassword } from "../../utils"
 import { v4 as uuidv4 } from 'uuid';
 
-export const getUserByEmail = async (email) => {
-  try {
-    const query = await global.firestore.collection('users').where("email", "==", email).get()
-    if (!query.empty) {
-      return query.docs[0].data()
-    }
-  } catch (error) {
-    console.log(error)
-  }
-  return
+
+export const getUsers = async () => {
+  let users = global.users
+  return users
+}
+
+export const getUserByUsername = async (username) => {
+  let user = global.users.find(i => i.username === username)
+  return user
 }
 
 export const getUserById = async (id) => {
-  try {
-    const query = await global.firestore.collection('users').doc(id).get();
-    if (query.exists) {
-      return query.data()
-    }
-  } catch (error) {
-
-  }
-  return
+  let user = global.users.find(i => i.id === id)
+  return user
 }
 
-export const createUser = async (email, password) => {
+export const createUser = async (payload) => {
   try {
+    let { username, password, name, role } = payload
+
     let hashedPassword = await hashPassword(password)
 
     let newId = uuidv4()
     let newUser = {
       id: newId,
-      email: email,
+      username,
       password: hashedPassword.password,
+      name,
+      role: role
     }
 
-    await firestore.collection('users').doc(newId).set(newUser);
+    global.users.push(newUser);
     return newUser
 
   } catch (error) {
@@ -52,7 +48,10 @@ export const updateUserById = async (id, user) => {
         ...existedUser,
         ...user,
       }
-      await firestore.collection('users').doc(id).update(updatedUser);
+
+      let itemIndex = global.users.findIndex(i => i?.id === id)
+      let newList = [...prev.slice(0, itemIndex), updatedUser, ...prev.slice(itemIndex + 1)]
+      global.users = newList
       return updatedUser
     }
 

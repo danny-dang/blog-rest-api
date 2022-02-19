@@ -24,6 +24,7 @@ export const handleGetBlogById = async (req, res) => {
 }
 
 export const handleCreateBlog = async (req, res) => {
+  let user = req.user
   let { title, content } = req.body
 
   if (!title) {
@@ -38,7 +39,7 @@ export const handleCreateBlog = async (req, res) => {
     })
   }
 
-  let result = await createBlog({ title, content })
+  let result = await createBlog({ title, content, author: user.id })
   if (!result) {
     return res.status(500).send({
       message: `Error creating blog, try again later`,
@@ -48,6 +49,7 @@ export const handleCreateBlog = async (req, res) => {
 }
 
 export const handleEditBlogById = async (req, res) => {
+  let user = req.user
   let { id } = req.params
   let { title, content } = req.body
   if (!title) {
@@ -61,6 +63,17 @@ export const handleEditBlogById = async (req, res) => {
       message: `content is missing`,
     })
   }
+
+  let blog = await getBlogById(id)
+
+  if (blog) {
+    if (blog.author !== user.id) {
+      return res.status(403).send({
+        message: `You are not the owner of this blog: ${id}`,
+      })
+    }
+  }
+
   let result = await editBlogById(id, { title, content })
   if (!result) {
     return res.status(404).send({
@@ -72,6 +85,17 @@ export const handleEditBlogById = async (req, res) => {
 
 export const handleDeleteBlogById = async (req, res) => {
   let { id } = req.params
+  let user = req.user
+
+  let blog = await getBlogById(id)
+  if (blog) {
+    if (!(blog.author === user.id || user.role === 'admin')) {
+      return res.status(403).send({
+        message: `You are not the owner of this blog: ${id}, or admin`,
+      })
+    }
+  }
+
   let result = deleteBlogById(id)
   if (!result) {
     return res.status(404).send({

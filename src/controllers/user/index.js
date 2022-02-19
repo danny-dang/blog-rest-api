@@ -1,21 +1,22 @@
 import config from '../../config'
 import { baseResponse, cleanSecretFields, comparePassword, signToken } from '../../utils'
 import {
-  getUserByEmail,
+  getUserByUsername,
   createUser,
-  getUserById
+  getUserById,
+  getUsers
 } from "./services"
 
 export const handleLogin = async (req, res) => {
-  let { email, password } = req.body
+  let { username, password } = req.body
 
   try {
-    let user = await getUserByEmail(email)
+    let user = await getUserByUsername(username)
 
     if (user === undefined) {
       return res.status(401).send({
         statusCode: 401,
-        message: 'Email or password is incorrect',
+        message: 'username or password is incorrect',
       })
     }
 
@@ -24,15 +25,12 @@ export const handleLogin = async (req, res) => {
     if (!isValid) {
       return res.status(401).send({
         statusCode: 401,
-        message: 'Email or password is incorrect',
+        message: 'username or password is incorrect',
       })
     }
 
     const token = signToken(user)
 
-    if (user?.subscriptions) {
-      user.subscriptions = user?.subscriptions.filter(i => i.environment === config.environment)
-    }
     const result = {
       token: token,
       user: cleanSecretFields(user)
@@ -49,19 +47,24 @@ export const handleLogin = async (req, res) => {
 }
 
 export const handleRegister = async (req, res) => {
-  let { email, password } = req.body
+  let { username, password, name } = req.body
 
   try {
-    let existedUser = await getUserByEmail(email)
+    let existedUser = await getUserByUsername(username)
 
     if (existedUser) {
       return res.status(400).send({
         statusCode: 400,
-        message: 'Email existed. Please use another one.',
+        message: 'username existed. Please use another one.',
       })
     }
 
-    let newUser = await createUser(email, password)
+    let newUser = await createUser({
+      username,
+      password,
+      name,
+      role: 'user'
+    })
 
     if (!newUser) {
       return res.status(500).send({
@@ -98,4 +101,15 @@ export const getProfile = async (req, res) => {
   }
 
   return res.json(baseResponse('Get profile successfully', { user: cleanSecretFields(user) }))
+}
+
+export const handleGetAllUsers = async (req, res) => {
+  let users = await getUsers()
+  const data = {
+    users: users.map(i => ({
+      ...i,
+      password: ''
+    }))
+  }
+  return res.json(baseResponse('Get all users successfully', data))
 }

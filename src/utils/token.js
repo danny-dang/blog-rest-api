@@ -9,7 +9,7 @@ export const getBearerToken = (authHeader) => {
 export const signToken = (user) => {
   const token = jwt.sign({
     id: user.id,
-    email: user.email
+    username: user.username
   }, config.jwtKey);
 
   return token

@@ -4,9 +4,11 @@ import express, { json } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import restRouter from './routes'
-import config from './config'
+import blogs from './db/blogs'
+import users from './db/users'
 
-global.blogs = []
+global.blogs = blogs
+global.users = users
 
 console.log('Database connected')
 
@@ -53,5 +55,3 @@ app.use((req, res, next) => {
 })
 
 export default app
-//test 1
-//test 2 

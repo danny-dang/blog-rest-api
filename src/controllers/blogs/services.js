@@ -6,6 +6,7 @@ export const getBlogs = async () => {
   return global.blogs.map(i => ({
     id: i?.id,
     createdAt: i?.createdAt,
+    author: i?.author,
     title: i?.title,
   })) || []
 }
@@ -37,7 +38,8 @@ export const editBlogById = async (id, payload) => {
 
   global.blogs[blogIndex] = {
     id: global.blogs[blogIndex].id,
-    createdAt: global.blogs[blogIndex].createdAt,
+    createdAt: global.blogs[blogIndex]?.createdAt,
+    author: global.blogs[blogIndex]?.author,
     ...payload
   }
   return global.blogs[blogIndex]

@@ -6,12 +6,10 @@ export const baseResponse = (message, data, statusCode) => {
 }
 
 export function cleanSecretFields(user) {
-  if (user.password) {
-    delete user.password
-    delete user.stripeCustomerId
+  let clone = JSON.parse(JSON.stringify(user))
+  if (clone.password) {
+    delete clone.password
   }
-  if (user.subscriptions) {
-    user.subscriptions.forEach((i) => { delete i.stripeSubscriptionId });
-  }
-  return user
+
+  return clone
 }
