@@ -1,5 +1,13 @@
 # Blog REST API server (No database)
+This is a sample Blog API server.
 
+## How to run
+
+```
+npm start
+```
+
+Server running at port `3001`
 ## API docs
 
 Swagger API docs is at `/api/docs` (comming soon)
