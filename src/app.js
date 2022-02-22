@@ -6,6 +6,8 @@ import cors from 'cors'
 import restRouter from './routes'
 import blogs from './db/blogs'
 import users from './db/users'
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUI from 'swagger-ui-express'
 
 global.blogs = blogs
 global.users = users
@@ -13,6 +15,17 @@ global.users = users
 console.log('Database connected')
 
 const app = express()
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'Blog Rest API',
+      version: '1.0.0'
+    }
+  },
+  apis: ['./src/routes/*.js'],
+}
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
 // configuration stuff first
 app.use(json({ limit: '2mb' }))
@@ -30,6 +43,7 @@ app.use(
 )
 
 restRouter(app);
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use('/', (req, res) => {
   res.send('Welcome to Blog Rest API')
