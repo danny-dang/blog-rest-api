@@ -13,9 +13,13 @@ export const isUserAuthenticated = async (req, res, next) => {
     const token = getBearerToken(authHeader)
 
     if (token) {
-      let user = verifyToken(token)
-
-      if (!user) {
+      let user
+      try {
+        user = verifyToken(token)
+        if (!user) {
+          throw ''
+        }
+      } catch (e) {
         return res.status(401).json({
           status: 401,
           message: 'TOKEN UNAUTHORIZED'
